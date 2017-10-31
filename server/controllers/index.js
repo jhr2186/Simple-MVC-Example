@@ -11,15 +11,8 @@ const defaultData = {
   bedsOwned: 0,
 };
 
-const defaultDog = {
-  name: "Doge",
-  breed: "Doggo",
-  age: 69,
-}
-
 // object for us to keep track of the last Cat we made and dynamically update it sometimes
 let lastAdded = new Cat(defaultData);
-let lastAddedDog = new Dog(defaultDog);
 
 // function to handle requests to the main page
 // controller functions in Express receive the full HTTP request
@@ -82,7 +75,7 @@ const readCat = (req, res) => {
 
 const readDog = (req, res) => {
   const name1 = req.query.name;
-  
+
   const callback = (err, doc) => {
     if (err) {
       return res.json({ err }); // if error, return it
@@ -91,7 +84,7 @@ const readDog = (req, res) => {
     // return success
     return res.json(doc);
   };
-  
+
   Dog.findByName(name1, callback);
 };
 
@@ -201,12 +194,12 @@ const setName = (req, res) => {
   });
 
   // if error, return it
-  savePromise.catch((err) => res.json({ err }));
+  savePromise.catch(err => res.json({ err }));
 
   return res;
 };
 
-//set the dog stuff
+// set the dog stuff
 const setNameDog = (req, res) => {
   // check if the required fields exist
   // normally you would also perform validation
@@ -236,7 +229,7 @@ const setNameDog = (req, res) => {
   });
 
   // if error, return it
-  savePromise.catch((err) => res.json({ err }));
+  savePromise.catch(err => res.json({ err }));
 
   return res;
 };
@@ -294,18 +287,20 @@ const searchNameDog = (req, res) => {
     if (!doc) {
       return res.json({ error: 'No dogs found' });
     }
-    
-    //increase age of dog if it exists
-    doc.age++;
-    
-    const savePromise = doc.save();
-    
-    savePromise.then(() => res.json({ name: doc.name, breed: doc.breed, age: doc.age }));
+
+    // increase age of dog if it exists
+    const newDog = doc;
+
+    newDog.age++;
+
+    const savePromise = newDog.save();
+
+    savePromise.then(() => res.json({ name: newDog.name, breed: newDog.breed, age: newDog.age }));
 
     // if save error, just return an error for now
-    savePromise.catch((err) => res.json({ err }));
-    
-    return res.json({ name: doc.name, breed: doc.breed, age: doc.age });
+    savePromise.catch(err);
+
+    return res.json({ name: newDog.name, breed: newDog.breed, age: newDog.age });
   });
 };
 
@@ -332,7 +327,7 @@ const updateLast = (req, res) => {
   savePromise.then(() => res.json({ name: lastAdded.name, beds: lastAdded.bedsOwned }));
 
   // if save error, just return an error for now
-  savePromise.catch((err) => res.json({ err }));
+  savePromise.catch(err => res.json({ err }));
 };
 
 // function to handle a request to any non-real resources (404)
